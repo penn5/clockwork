@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Clockwork Patience</string>
+    <string name="new_game">New Game</string>
+    <string name="resume_game">Resume Game</string>
+    <string name="you_lose">You Lose</string>
+    <string name="you_win">You Win</string>
+    <string name="ace">A</string>
+    <string name="jack">J</string>
+    <string name="queen">Q</string>
+    <string name="king">K</string>
+</resources>

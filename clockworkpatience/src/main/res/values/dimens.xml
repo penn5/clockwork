@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="card_width">56sp</dimen>
+    <dimen name="card_height">90sp</dimen>
+    <dimen name="card_rad">150sp</dimen>
+    <dimen name="card_elevation">5sp</dimen>
+    <dimen name="deck_elevation">10dp</dimen>
+</resources>
