@@ -76,7 +76,7 @@ class PlayActivity : AppCompatActivity() {
             Log.d(tag, "Got serialized game state $gameState")
             game = json.parse(Game.serializer(), gameState)
         } else {
-            game = Game(GameConfig(true))
+            game = Game(GameConfig(intent.getBooleanExtra(EXTRA_DISCARD_ON_REVEAL, false)))
             game.getCard()
         }
         updateGame()
@@ -255,7 +255,8 @@ class PlayActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val EXTRA_RESUME: String = "resume"
+        const val EXTRA_RESUME = "resume"
+        const val EXTRA_DISCARD_ON_REVEAL = "discardOnReveal"
         const val tag = "ClockworkMainActivity"
         const val saveFile = "game_save.json"
     }

@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,12 +20,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun newGame(view: View) {
-        val intent = Intent(this, PlayActivity::class.java)
+        val intent = Intent(this, PlayActivity::class.java).apply {
+            putExtra(PlayActivity.EXTRA_DISCARD_ON_REVEAL, discard_on_reveal.isChecked)
+        }
         startActivity(intent)
     }
     fun resumeGame(view: View) {
         val intent = Intent(this, PlayActivity::class.java).apply {
             putExtra(PlayActivity.EXTRA_RESUME, true)
+            putExtra(PlayActivity.EXTRA_DISCARD_ON_REVEAL, discard_on_reveal.isChecked)
         }
         startActivity(intent)
     }

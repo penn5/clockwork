@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <CheckBox
+        android:id="@+id/discard_on_reveal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/discard_on_reveal"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/button_new"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
     <Button
         android:id="@+id/button_new"
         android:layout_width="wrap_content"
@@ -16,7 +28,7 @@
         app:layout_constraintBottom_toTopOf="@id/button_resume"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/discard_on_reveal" />
 
     <Button
         android:id="@+id/button_resume"
@@ -29,4 +41,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button_new" />
+
 </android.support.constraint.ConstraintLayout>

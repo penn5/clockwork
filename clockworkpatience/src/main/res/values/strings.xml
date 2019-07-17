@@ -8,6 +8,7 @@
     <string name="jack">J</string>
     <string name="queen">Q</string>
     <string name="king">K</string>
+    <string name="discard_on_reveal">Hard mode</string>
     <string name="license_title">Licenses</string>
     <string name="license">
         clockworklib and clockworkpatience:
