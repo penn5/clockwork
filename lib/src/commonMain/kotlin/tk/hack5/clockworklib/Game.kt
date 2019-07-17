@@ -149,6 +149,9 @@ class Game(val config: GameConfig) {
         val cardsInSuit = getCardsOfSuit(actionCard.suit)
         if (!isCardTurnedOver(actionCard.number))
             return Action.TURN_OVER
+        if (visibleState.visibleCards.filterNotNull().filter { isCardMoveable(it.position!!) }
+                        .isEmpty())
+            return Action.DISCARD_CARD
         if (cardsInSuit.isEmpty())
             // if there is only one movable card
             return if (visibleState.visibleCards.filterNotNull().filter
@@ -166,9 +169,6 @@ class Game(val config: GameConfig) {
             else
             // There's only 2 cards that can be swapped, just act as though we can swap any valid.
                 Action.SWAP_SUIT_NUMBER
-        if (visibleState.visibleCards.filterNotNull().filter { isCardMoveable(it.position!!) }
-                        .isEmpty())
-            return Action.DISCARD_CARD
         // There's multiple cards in the suit. Swap whatever you want within the rules
         return Action.SWAP_SUIT_NUMBER
     }
