@@ -4,9 +4,9 @@
     <facet type="kotlin-language" name="Kotlin">
       <configuration version="3" platform="JVM 1.6" useProjectSettings="false" isTestModule="true" externalProjectId=":lib">
         <sourceSets>
-          <sourceSet>tk.hack5.clockworklib.lib.jvmMain</sourceSet>
           <sourceSet>tk.hack5.clockworklib.lib.commonTest</sourceSet>
           <sourceSet>tk.hack5.clockworklib.lib.commonMain</sourceSet>
+          <sourceSet>tk.hack5.clockworklib.lib.jvmMain</sourceSet>
         </sourceSets>
         <newMppModelJpsModuleKind>COMPILATION_AND_SOURCE_SET_HOLDER</newMppModelJpsModuleKind>
         <compilerSettings>

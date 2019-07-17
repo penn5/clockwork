@@ -1,6 +1,7 @@
 package tk.hack5.clockworklib
 
 import kotlinx.serialization.*
+import kotlinx.serialization.internal.SerialClassDescImpl
 
 @Serializable
 class Game(val config: GameConfig) {
@@ -14,16 +15,40 @@ class Game(val config: GameConfig) {
 
     @Serializer(forClass = Game::class)
     companion object : KSerializer<Game>, DeserializationStrategy<Game> {
-        @ImplicitReflectionSerializer
         override fun serialize(encoder: Encoder, obj: Game) {
-            encoder.encode(obj.config)
-            encoder.encode(obj.deck)
-            encoder.encode(obj.visibleState)
+            val output = encoder.beginStructure(descriptor)
+            output.encodeSerializableElement(descriptor, 0, GameConfig.serializer(), obj.config)
+            output.encodeSerializableElement(descriptor, 1, Deck.serializer(), obj.deck)
+            output.encodeSerializableElement(descriptor, 2, VisibleState.serializer(), obj.visibleState)
+            output.endStructure(descriptor)
         }
 
-        @ImplicitReflectionSerializer
         override fun deserialize(decoder: Decoder): Game {
-            return Game(decoder.decode(), decoder.decode(), decoder.decode())
+            var config: GameConfig? = null
+            var deck: Deck? = null
+            var visibleState: VisibleState? = null
+            val input = decoder.beginStructure(descriptor)
+            loop@while (true) {
+                when (val i = input.decodeElementIndex(descriptor)) {
+                    CompositeDecoder.READ_DONE -> break@loop
+                    0 -> config = input.decodeSerializableElement(descriptor, i, GameConfig.serializer())
+                    1 -> deck = input.decodeSerializableElement(descriptor, i, Deck.serializer())
+                    2 -> visibleState = input.decodeSerializableElement(descriptor, i, VisibleState.serializer())
+                    else -> throw SerializationException("Unknown index $i")
+                }
+            }
+            input.endStructure(descriptor)
+            return Game(config ?: throw MissingFieldException("config"),
+                    deck?.cards ?: throw MissingFieldException("deck"),
+                    visibleState ?: throw MissingFieldException("visibleState"))
+        }
+
+        override val descriptor: SerialDescriptor = object : SerialClassDescImpl("Game") {
+            init {
+                addElement("config")
+                addElement("deck")
+                addElement("visibleState")
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package tk.hack5.clockworkpatience
 
+import android.content.Context
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.constraint.ConstraintLayout
@@ -233,6 +234,24 @@ class PlayActivity : AppCompatActivity() {
                 updateGame()
             }
         }
+    }
+
+    fun saveGame() {
+        val json = Json(JsonConfiguration.Stable)
+        val text = json.stringify(Game.serializer(), game)
+        openFileOutput(saveFile, Context.MODE_PRIVATE).use {
+            it.write (text.toByteArray())
+        }
+    }
+
+    override fun onStop() {
+        saveGame()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        saveGame()
+        super.onDestroy()
     }
 
     companion object {
