@@ -2,22 +2,25 @@ package tk.hack5.clockworkpatience
 
 import android.content.Context
 import android.os.Bundle
-import android.support.annotation.DrawableRes
-import android.support.constraint.ConstraintLayout
-import android.support.constraint.ConstraintSet
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.CardView
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.DrawableRes
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.res.ResourcesCompat
+import androidx.dynamicanimation.animation.DynamicAnimation
+import androidx.dynamicanimation.animation.SpringAnimation
 import kotlinx.android.synthetic.main.activity_play.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import tk.hack5.clockworklib.*
 import java.io.FileNotFoundException
+import kotlin.concurrent.thread
 
 
 class PlayActivity : AppCompatActivity() {
@@ -94,7 +97,7 @@ class PlayActivity : AppCompatActivity() {
     private fun updateDeck() {
         (deck_remaining as TextView).text = game.getSizeOfDeck().toString()
         putCardPhotoAndNum(game.visibleState.currentAction!!, deck as CardView)
-        //((deck.getChildAt(0) as ConstraintLayout).getChildAt(0) as TextView).text = game.visibleState.currentAction!!.suit.toString() + game.visibleState.currentAction!!.number.toString()
+        putCardPhotoAndNum(game.peekCard(), deck_behind_second as CardView)
     }
 
     private fun updateClickables(deletion: Boolean = false) {
@@ -218,13 +221,17 @@ class PlayActivity : AppCompatActivity() {
                     (view as CardView).setCardBackgroundColor(ResourcesCompat.getColor(resources, R.color.card_background_moving, theme))
                     clickedCard = Pair(numberShownOnCard, view)
                 } else {
-                    clickedCard?.second?.setCardBackgroundColor(ResourcesCompat.getColor(resources, R.color.card_background_default, theme))
-                    if (clickedCard?.first != numberShownOnCard) {
-                        game.doSwap(game.visibleState.currentAction!!, game.visibleState[clickedCard!!.first]!!, game.visibleState[numberShownOnCard]!!)
-                        checkAndDraw()
+                    thread(start = true) @Synchronized {
+                        clickedCard?.second?.setCardBackgroundColor(ResourcesCompat.getColor(resources, R.color.card_background_default, theme))
+                        if (clickedCard?.first != numberShownOnCard) {
+                            if (clickedCard != null)
+                                animateSwap3(deck as CardView, clickedCard!!.second, view as CardView)
+                            game.doSwap(game.visibleState.currentAction!!, game.visibleState[clickedCard!!.first]!!, game.visibleState[numberShownOnCard]!!)
+                            checkAndDraw()
+                        }
+                        clickedCard = null
+                        runOnUiThread { updateGame() }
                     }
-                    clickedCard = null
-                    updateGame()
                 }
             }
             Action.SWAP_ONE -> {
@@ -236,6 +243,68 @@ class PlayActivity : AppCompatActivity() {
                 checkAndDraw()
                 updateGame()
             }
+        }
+    }
+
+    // Don't run from UI thread! It deadlocks!
+    private fun animateSwap3(actionCard: CardView, moveCard: CardView, discardCard: CardView) {
+        runOnUiThread {
+            moveCard.bringToFront()
+            actionCard.bringToFront()
+            rootView.invalidate()
+        }
+
+        val animActionX = SpringAnimation(actionCard, DynamicAnimation.X, moveCard.x)
+        val animActionY = SpringAnimation(actionCard, DynamicAnimation.Y, moveCard.y)
+        val animActionR = SpringAnimation(actionCard, DynamicAnimation.ROTATION, moveCard.rotation)
+        val animMoveX = SpringAnimation(moveCard, DynamicAnimation.X, discardCard.x)
+        val animMoveY = SpringAnimation(moveCard, DynamicAnimation.Y, discardCard.y)
+        val animMoveR = SpringAnimation(moveCard, DynamicAnimation.ROTATION, discardCard.rotation)
+
+        var finishedCount = 0
+        val finishedLock = Object()
+
+        val mainCb = {
+            synchronized(finishedLock) {
+                finishedCount++
+                finishedLock.notify()
+            }
+        }
+
+        val actionX = actionCard.x
+        animActionX.addEndListener { _, _, _, _ -> mainCb() }
+        val actionY = actionCard.y
+        animActionY.addEndListener { _, _, _, _ -> mainCb() }
+        val actionR = actionCard.rotation
+        animActionR.addEndListener { _, _, _, _ -> mainCb() }
+        val moveX = moveCard.x
+        animMoveX.addEndListener { _, _, _, _ -> mainCb() }
+        val moveY = moveCard.y
+        animMoveY.addEndListener { _, _, _, _ -> mainCb() }
+        val moveR = moveCard.rotation
+        animMoveR.addEndListener { _, _, _, _ -> mainCb() }
+
+        runOnUiThread {
+            animActionX.start()
+            animActionY.start()
+            animActionR.start()
+            animMoveX.start()
+            animMoveY.start()
+            animMoveR.start()
+        }
+
+        synchronized(finishedLock) {
+            while (finishedCount < 6) {
+                finishedLock.wait()
+            }
+        }
+        runOnUiThread {
+            actionCard.x = actionX
+            actionCard.y = actionY
+            actionCard.rotation = actionR
+            moveCard.x = moveX
+            moveCard.y = moveY
+            moveCard.rotation = moveR
         }
     }
 

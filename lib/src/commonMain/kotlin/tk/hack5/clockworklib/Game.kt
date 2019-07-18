@@ -76,10 +76,12 @@ class Game(val config: GameConfig) {
      * @return the card
      */
     fun getCard(): Card {
-        if (isWon() != null)
-            throw RuntimeException("Game Over!")
         visibleState.currentAction = deck.pop()
         return visibleState.currentAction!!
+    }
+
+    fun peekCard(): Card {
+        return deck.peek()
     }
 
     /**
