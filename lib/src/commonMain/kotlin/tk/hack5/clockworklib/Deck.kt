@@ -18,7 +18,7 @@ class Deck(val cards: MutableList<Card>) {
     }
 
     fun add(card: Card) {
-        cards.add(card)
+        cards.add(0, card)
     }
 
     companion object {
