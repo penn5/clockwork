@@ -55,6 +55,8 @@ class PlayActivity : AppCompatActivity() {
             card.setOnClickListener { onTouchForCard(i+1, it) }
         }
 
+        deck.setOnClickListener { onTouchForCard(0, it) }
+
         val json = Json(JsonConfiguration.Stable)
 
         // Check mode
