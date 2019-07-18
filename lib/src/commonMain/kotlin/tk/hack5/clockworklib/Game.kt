@@ -207,12 +207,12 @@ class Game(val config: GameConfig) {
      * @return null if game is ongoing, true if won, false if lost
      */
     fun isWon(): Boolean? {
-        // empty deck = lose
-        if (deck.cards.isEmpty())
-            return false
         // all cards complete = win
         if ((1..13).all { isCardCompleted(it) })
             return true
+        // empty deck = lose
+        if (deck.cards.isEmpty())
+            return false
         return null
     }
 }
