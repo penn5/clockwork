@@ -6,12 +6,10 @@
     android:clickable="true"
     android:focusable="true"
     android:focusableInTouchMode="false"
-    android:rotation="0"
+    android:foreground="?android:attr/selectableItemBackground"
     app:cardBackgroundColor="@color/card_background_default"
     app:cardElevation="@dimen/card_elevation"
-    app:layout_constraintCircle="@+id/center"
-    app:layout_constraintCircleAngle="0"
-    app:layout_constraintCircleRadius="@dimen/card_rad">
+    app:cardPreventCornerOverlap="false">
 
     <include layout="@layout/card_inside" />
 

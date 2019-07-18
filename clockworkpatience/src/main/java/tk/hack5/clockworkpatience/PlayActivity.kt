@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.CardView
@@ -33,7 +34,7 @@ class PlayActivity : AppCompatActivity() {
         val layoutInflater = layoutInflater
         var newCard: CardView
         cardViews = arrayOfNulls(13)
-        cardViews[12] = center_card
+        cardViews[12] = center_card as CardView
         Log.d(tag, resources.getDimension(R.dimen.card_rad).toInt().toString())
         for ((i, cardNum) in ((11..11)+(0..10)).withIndex()) { // clock goes 12,1..11,13
             newCard = layoutInflater.inflate(R.layout.card, rootView, false) as CardView
@@ -92,7 +93,7 @@ class PlayActivity : AppCompatActivity() {
 
     private fun updateDeck() {
         (deck_remaining as TextView).text = game.getSizeOfDeck().toString()
-        putCardPhotoAndNum(game.visibleState.currentAction!!, deck)
+        putCardPhotoAndNum(game.visibleState.currentAction!!, deck as CardView)
         //((deck.getChildAt(0) as ConstraintLayout).getChildAt(0) as TextView).text = game.visibleState.currentAction!!.suit.toString() + game.visibleState.currentAction!!.number.toString()
     }
 
@@ -130,12 +131,12 @@ class PlayActivity : AppCompatActivity() {
             Action.DISCARD_CARD -> {
                 makeAllClickable(false)
                 deck.isClickable = true
-                deck.setCardBackgroundColor(resources.getColor(R.color.card_background_movable, theme))
+                (deck as CardView).setCardBackgroundColor(ResourcesCompat.getColor(resources, R.color.card_background_movable, theme))
             }
         }
         for ((i, card) in cardViews.withIndex()) {
             if (game.isCardCompleted(i+1))
-                card!!.setCardBackgroundColor(resources.getColor(R.color.card_background_correct, theme))
+                card!!.setCardBackgroundColor(ResourcesCompat.getColor(resources, R.color.card_background_correct, theme))
         }
     }
 
@@ -143,7 +144,7 @@ class PlayActivity : AppCompatActivity() {
         for ((i, card) in cardViews.withIndex()) {
             val cardData = game.visibleState[i+1]
             putCardPhotoAndNum(cardData, card!!)
-            deck.setCardBackgroundColor(resources.getColor(R.color.deck_background_default, theme))
+            (deck as CardView).setCardBackgroundColor(ResourcesCompat.getColor(resources, R.color.deck_background_default, theme))
         }
     }
 
@@ -153,7 +154,7 @@ class PlayActivity : AppCompatActivity() {
     }
     private fun makeOneClickable(clickable: Boolean, cardView: CardView) {
         cardView.isClickable = clickable
-        cardView.setCardBackgroundColor(if (clickable) resources.getColor(R.color.card_background_movable, theme) else resources.getColor(R.color.card_background_default, theme))
+        cardView.setCardBackgroundColor(if (clickable) ResourcesCompat.getColor(resources, R.color.card_background_movable, theme) else ResourcesCompat.getColor(resources, R.color.card_background_default, theme))
     }
     
     private fun putCardPhotoAndNum(card: Card?, view: CardView) {
@@ -194,7 +195,7 @@ class PlayActivity : AppCompatActivity() {
                 .setOnDismissListener { finish() }
                 .show()
         updateGame()
-        deck.setCardBackgroundColor(resources.getColor(if (game.isWon() ?: return true) R.color.card_background_correct else R.color.deck_background_default, theme))
+        (deck as CardView).setCardBackgroundColor(ResourcesCompat.getColor(resources, if (game.isWon() ?: return true) R.color.card_background_correct else R.color.deck_background_default, theme))
         return false
     }
 
@@ -214,10 +215,10 @@ class PlayActivity : AppCompatActivity() {
             Action.SWAP_ANY, Action.SWAP_SUIT_NUMBER -> {
                 if (clickedCard == null) {
                     updateClickables(true)
-                    (view as CardView).setCardBackgroundColor(resources.getColor(R.color.card_background_moving, theme))
+                    (view as CardView).setCardBackgroundColor(ResourcesCompat.getColor(resources, R.color.card_background_moving, theme))
                     clickedCard = Pair(numberShownOnCard, view)
                 } else {
-                    clickedCard?.second?.setCardBackgroundColor(resources.getColor(R.color.card_background_default, theme))
+                    clickedCard?.second?.setCardBackgroundColor(ResourcesCompat.getColor(resources, R.color.card_background_default, theme))
                     if (clickedCard?.first != numberShownOnCard) {
                         game.doSwap(game.visibleState.currentAction!!, game.visibleState[clickedCard!!.first]!!, game.visibleState[numberShownOnCard]!!)
                         checkAndDraw()
@@ -238,7 +239,7 @@ class PlayActivity : AppCompatActivity() {
         }
     }
 
-    fun saveGame() {
+    private fun saveGame() {
         val json = Json(JsonConfiguration.Stable)
         val text = json.stringify(Game.serializer(), game)
         openFileOutput(saveFile, Context.MODE_PRIVATE).use {

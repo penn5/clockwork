@@ -19,13 +19,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
     }
 
-    fun newGame(view: View) {
+    fun newGame(@Suppress("UNUSED_PARAMETER") unused: View) {
         val intent = Intent(this, PlayActivity::class.java).apply {
             putExtra(PlayActivity.EXTRA_DISCARD_ON_REVEAL, discard_on_reveal.isChecked)
         }
         startActivity(intent)
     }
-    fun resumeGame(view: View) {
+    fun resumeGame(@Suppress("UNUSED_PARAMETER") unused: View) {
         val intent = Intent(this, PlayActivity::class.java).apply {
             putExtra(PlayActivity.EXTRA_RESUME, true)
             putExtra(PlayActivity.EXTRA_DISCARD_ON_REVEAL, discard_on_reveal.isChecked)
