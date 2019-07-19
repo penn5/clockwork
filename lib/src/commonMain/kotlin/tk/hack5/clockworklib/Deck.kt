@@ -19,7 +19,7 @@ class Deck(val cards: MutableList<Card>) {
 
     fun peek(): Card {
         if (cards.isEmpty())
-            throw IndexOutOfBoundsException("Game over!")
+            return null
         return cards.last()
     }
 
