@@ -80,7 +80,7 @@ class Game(val config: GameConfig) {
         return visibleState.currentAction!!
     }
 
-    fun peekCard(): Card {
+    fun peekCard(): Card? {
         return deck.peek()
     }
 

@@ -17,7 +17,7 @@ class Deck(val cards: MutableList<Card>) {
         return ret
     }
 
-    fun peek(): Card {
+    fun peek(): Card? {
         if (cards.isEmpty())
             return null
         return cards.last()
