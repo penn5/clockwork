@@ -224,10 +224,11 @@ class PlayActivity : AppCompatActivity() {
                     thread(start = true) @Synchronized {
                         clickedCard?.second?.setCardBackgroundColor(ResourcesCompat.getColor(resources, R.color.card_background_default, theme))
                         if (clickedCard?.first != numberShownOnCard) {
-                            if (clickedCard != null)
+                            if (clickedCard != null) {
                                 animateSwap3(deck as CardView, clickedCard!!.second, view as CardView)
-                            game.doSwap(game.visibleState.currentAction!!, game.visibleState[clickedCard!!.first]!!, game.visibleState[numberShownOnCard]!!)
-                            checkAndDraw()
+                                game.doSwap(game.visibleState.currentAction!!, game.visibleState[clickedCard!!.first]!!, game.visibleState[numberShownOnCard]!!)
+                                checkAndDraw()
+                            }
                         }
                         clickedCard = null
                         runOnUiThread { updateGame() }
