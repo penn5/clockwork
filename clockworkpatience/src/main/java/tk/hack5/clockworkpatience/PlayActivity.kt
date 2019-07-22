@@ -199,7 +199,7 @@ class PlayActivity : AppCompatActivity() {
                     .setOnDismissListener { finish() }
                     .show()
             updateGame()
-            (deck as CardView).setCardBackgroundColor(ResourcesCompat.getColor(resources, if (game.isWon() ?: return true) R.color.card_background_correct else R.color.deck_background_default, theme))
+            (deck as CardView).setCardBackgroundColor(ResourcesCompat.getColor(resources, if (it) R.color.card_background_correct else R.color.deck_background_default, theme))
             return false
         }
         return true
