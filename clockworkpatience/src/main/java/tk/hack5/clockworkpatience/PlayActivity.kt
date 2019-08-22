@@ -193,14 +193,16 @@ class PlayActivity : AppCompatActivity() {
 
     private fun checkGameState(): Boolean {
         game.isWon()?.let {
-            AlertDialog.Builder(this)
-                    .setMessage(if (it) R.string.you_win else R.string.you_lose)
-                    .setIcon(R.drawable.cards_playing_outline)
-                    .setOnDismissListener { finish() }
-                    .show()
-            updateGame()
-            (deck as CardView).setCardBackgroundColor(ResourcesCompat.getColor(resources, if (it) R.color.card_background_correct else R.color.deck_background_default, theme))
-            return false
+            runOnUiThread {
+                AlertDialog.Builder(this)
+                        .setMessage(if (it) R.string.you_win else R.string.you_lose)
+                        .setIcon(R.drawable.cards_playing_outline)
+                        .setOnDismissListener { finish() }
+                        .show()
+                updateGame()
+                (deck as CardView).setCardBackgroundColor(ResourcesCompat.getColor(resources, if (it) R.color.card_background_correct else R.color.deck_background_default, theme))
+                return false
+            }
         }
         return true
     }
